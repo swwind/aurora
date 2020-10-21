@@ -1,12 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <map>
-#include "napi.h"
-
-#include "keys.cc"
-#include "color.cc"
-#include "point.cc"
-#include "rect.cc"
+#include "render.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -19,7 +11,7 @@ std::map<int, SDL_Texture*> textureMap;
 
 std::vector<Napi::ThreadSafeFunction> keyEventCallbackList;
 
-void keyDownEventCallback(Napi::Env env, Napi::Function fn, int* e) {
+void RenderCallbacks::keyDownEventCallback(Napi::Env env, Napi::Function fn, int* e) {
 	Napi::Object result = Napi::Object::New(env);
 	result.Set(Napi::String::New(env, "type"),
 		Napi::String::New(env, "keydown"));
@@ -31,7 +23,7 @@ void keyDownEventCallback(Napi::Env env, Napi::Function fn, int* e) {
 	fn.Call({ result });
 	delete e;
 }
-void keyUpEventCallback(Napi::Env env, Napi::Function fn, int* e) {
+void RenderCallbacks::keyUpEventCallback(Napi::Env env, Napi::Function fn, int* e) {
 	Napi::Object result = Napi::Object::New(env);
 	result.Set(Napi::String::New(env, "type"),
 		Napi::String::New(env, "keyup"));
@@ -42,6 +34,12 @@ void keyUpEventCallback(Napi::Env env, Napi::Function fn, int* e) {
 
 	fn.Call({ result });
 	delete e;
+}
+void RenderCallbacks::registerKeyEventCallback(Napi::Env env, const Napi::Function& fn) {
+	keyEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
+		env, fn, "Emilia saikou!!", 0, 1,
+		[] (Napi::Env) { }
+	));
 }
 
 SDL_Texture* loadTexture(std::string path) {
@@ -55,32 +53,30 @@ SDL_Texture* loadTexture(std::string path) {
 	return newTexture;
 }
 
-namespace Render {
-
-void SetColor(const KColor& color) {
+void Render::SetColor(const KColor& color) {
 	SDL_SetRenderDrawColor(gRenderer, color.r, color.g, color.b, color.a);
 }
 
-void DrawLine(const KPoint& st, const KPoint& ed) {
+void Render::DrawLine(const KPoint& st, const KPoint& ed) {
 	SDL_RenderDrawLine(gRenderer, st.x, st.y, ed.x, ed.y);
 }
 
-void DrawPoint(const KPoint& p) {
+void Render::DrawPoint(const KPoint& p) {
 	SDL_RenderDrawPoint(gRenderer, p.x, p.y);
 }
 
-void DrawRect(const KRect& r) {
+void Render::DrawRect(const KRect& r) {
 	SDL_RenderDrawRect(gRenderer, &r);
 }
-void FillRect(const KRect& r) {
+void Render::FillRect(const KRect& r) {
 	SDL_RenderFillRect(gRenderer, &r);
 }
 
-void RenderPresent() {
+void Render::RenderPresent() {
 	SDL_RenderPresent(gRenderer);
 }
 
-bool registerTexture(int id, std::string src) {
+bool Render::registerTexture(int id, std::string src) {
   SDL_Texture* texture = loadTexture(src);
   if (texture == NULL) {
     return false;
@@ -89,7 +85,7 @@ bool registerTexture(int id, std::string src) {
   return true;
 }
 
-bool init() {
+bool Render::init() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		return false;
@@ -113,7 +109,7 @@ bool init() {
 	return true;
 }
 
-void close() {
+void Render::close() {
 	for (auto &pr : textureMap) {
 		SDL_DestroyTexture(pr.second);
 		pr.second = NULL;
@@ -130,7 +126,7 @@ void close() {
 	SDL_Quit();
 }
 
-void eventLoop() {
+void Render::eventLoop() {
 	bool quit = false;
 	SDL_Event e;
 	while (!quit) {
@@ -140,16 +136,14 @@ void eventLoop() {
 			}
 			if (e.type == SDL_KEYDOWN) {
 				for (auto tsfn = keyEventCallbackList.begin(); tsfn != keyEventCallbackList.end(); ++ tsfn) {
-					tsfn -> BlockingCall(new int(e.key.keysym.sym), keyDownEventCallback);
+					tsfn -> BlockingCall(new int(e.key.keysym.sym), RenderCallbacks::keyDownEventCallback);
 				}
 			}
 			if (e.type == SDL_KEYUP) {
 				for (auto tsfn = keyEventCallbackList.begin(); tsfn != keyEventCallbackList.end(); ++ tsfn) {
-					tsfn -> BlockingCall(new int(e.key.keysym.sym), keyUpEventCallback);
+					tsfn -> BlockingCall(new int(e.key.keysym.sym), RenderCallbacks::keyUpEventCallback);
 				}
 			}
 		}
 	}
 }
-
-} // namespace Render

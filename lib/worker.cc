@@ -1,20 +1,18 @@
-#include "render.cc"
+#include "worker.h"
 
-class RenderWorker : public Napi::AsyncWorker {
- public:
-  RenderWorker(Napi::Function& callback)
-      : Napi::AsyncWorker(callback) {}
-  ~RenderWorker() {}
+RenderWorker::RenderWorker(Napi::Function& callback)
+  : Napi::AsyncWorker(callback) {}
 
-  void Execute() {
-    Render::eventLoop();
-		Render::close();
-  }
+RenderWorker::~RenderWorker() {}
 
-  void OnOK() {
-    Callback().Call({Env().Undefined()});
-  }
-};
+void RenderWorker::Execute() {
+  Render::eventLoop();
+  Render::close();
+}
+
+void RenderWorker::OnOK() {
+  Callback().Call({Env().Undefined()});
+}
 
 Napi::Value StartEventLoop(const Napi::CallbackInfo& info) {
   Napi::Function callback = info[0].As<Napi::Function>();

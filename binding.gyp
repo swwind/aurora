@@ -4,7 +4,13 @@
       "target_name": "aurora",
       "cflags!": [ "-fno-exceptions" ],
       "cflags_cc!": [ "-fno-exceptions" ],
-      "sources": [ "aurora.cc" ],
+      "sources": [
+        "aurora.cc",
+        "lib/keys.cc",
+        "lib/shape.cc",
+        "lib/render.cc",
+        "lib/worker.cc"
+      ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
       ],

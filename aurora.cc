@@ -1,16 +1,11 @@
 #include <napi.h>
-#include "lib/worker.cc"
+#include "lib/render.h"
+#include "lib/worker.h"
 
 Napi::Value BindKeyEventCallback(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	Napi::Function fn = info[0].As<Napi::Function>();
-	keyEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
-		env,
-		fn,
-		"Emilia saikou!!",
-		0, 1,
-		[](Napi::Env) { }
-	));
+	RenderCallbacks::registerKeyEventCallback(env, fn);
 	return env.Undefined();
 }
 
