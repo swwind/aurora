@@ -9,35 +9,50 @@ SDL_Renderer* gRenderer = NULL;
 
 std::map<int, SDL_Texture*> textureMap;
 
-std::vector<Napi::ThreadSafeFunction> keyEventCallbackList;
+std::vector<Napi::ThreadSafeFunction>
+	keyEventCallbackList,
+	mouseEventCallbackList;
 
-void RenderCallbacks::keyDownEventCallback(Napi::Env env, Napi::Function fn, int* e) {
+void keyEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	Napi::Object result = Napi::Object::New(env);
-	result.Set(Napi::String::New(env, "type"),
-		Napi::String::New(env, "keydown"));
-	result.Set(Napi::String::New(env, "keycode"),
-		Napi::Number::New(env, *e));
-	result.Set(Napi::String::New(env, "key"),
-		SDL_KeyCode_to_string(env, (SDL_KeyCode) *e));
+	result["type"] = getEventType(e->type);
+	result["keycode"] = e->key.keysym.sym;
+	result["key"] = getKeyCode(e->key.keysym.sym);
 
 	fn.Call({ result });
 	delete e;
 }
-void RenderCallbacks::keyUpEventCallback(Napi::Env env, Napi::Function fn, int* e) {
+void mouseEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
 	Napi::Object result = Napi::Object::New(env);
-	result.Set(Napi::String::New(env, "type"),
-		Napi::String::New(env, "keyup"));
-	result.Set(Napi::String::New(env, "keycode"),
-		Napi::Number::New(env, *e));
-	result.Set(Napi::String::New(env, "key"),
-		SDL_KeyCode_to_string(env, (SDL_KeyCode) *e));
+	result["type"] = getEventType(e->type);
+	result["x"] = x;
+	result["y"] = y;
+
+	if (e->type == SDL_MOUSEWHEEL) {
+		result["dx"] = e->wheel.x;
+		result["dy"] = e->wheel.y;
+	}
+
+	if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP) {
+		result["button"] = getMouseType(e->button.button);
+	}
 
 	fn.Call({ result });
 	delete e;
 }
+
 void RenderCallbacks::registerKeyEventCallback(Napi::Env env, const Napi::Function& fn) {
 	keyEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
 		env, fn, "Emilia saikou!!", 0, 1,
+		[] (Napi::Env) { }
+	));
+}
+void RenderCallbacks::registerMouseEventCallback(Napi::Env env, const Napi::Function& fn) {
+	mouseEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
+		env, fn, "Ireina saikou!!", 0, 1,
 		[] (Napi::Env) { }
 	));
 }
@@ -134,14 +149,17 @@ void Render::eventLoop() {
 			if( e.type == SDL_QUIT ) {
 				quit = true;
 			}
-			if (e.type == SDL_KEYDOWN) {
-				for (auto tsfn = keyEventCallbackList.begin(); tsfn != keyEventCallbackList.end(); ++ tsfn) {
-					tsfn -> BlockingCall(new int(e.key.keysym.sym), RenderCallbacks::keyDownEventCallback);
+			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+				for (auto& tsfn : keyEventCallbackList) {
+					tsfn.BlockingCall(new SDL_Event(e), keyEventCallback);
 				}
 			}
-			if (e.type == SDL_KEYUP) {
-				for (auto tsfn = keyEventCallbackList.begin(); tsfn != keyEventCallbackList.end(); ++ tsfn) {
-					tsfn -> BlockingCall(new int(e.key.keysym.sym), RenderCallbacks::keyUpEventCallback);
+			if (e.type == SDL_MOUSEMOTION ||
+					e.type == SDL_MOUSEWHEEL ||
+					e.type == SDL_MOUSEBUTTONUP ||
+					e.type == SDL_MOUSEBUTTONDOWN) {
+				for (auto& tsfn : mouseEventCallbackList) {
+					tsfn.BlockingCall(new SDL_Event(e), mouseEventCallback);
 				}
 			}
 		}

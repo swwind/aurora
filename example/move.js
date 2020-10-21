@@ -1,6 +1,9 @@
 const aurora = require('..');
 
 const keys = { };
+let hover = false;
+let x = 100, y = 100, w = 50, h = 50;
+let lasttime = Date.now();
 
 aurora.bindKeyEventCallback((e) => {
   if (e.type === "keydown") {
@@ -9,6 +12,19 @@ aurora.bindKeyEventCallback((e) => {
     keys[e.key] = false;
   }
 });
+aurora.bindMouseEventCallback((e) => {
+  if (e.type === 'mousemove') {
+    if (e.x >= x && e.y >= y && e.x <= x + 50 && e.y <= y + 50) {
+      hover = true;
+    } else {
+      hover = false;
+    }
+  }
+  if (e.type === 'mousewheel') {
+    w = Math.max(0, w + 5 * e.dy);
+    h = Math.max(0, h + 5 * e.dy);
+  }
+})
 
 if (!aurora.init()) {
   console.log('failed to create window');
@@ -19,8 +35,6 @@ if (!aurora.init()) {
   });
 }
 
-let x = 100, y = 100;
-let lasttime = Date.now();
 setInterval(() => {
   const time = Date.now();
   if (keys["w"]) {
@@ -40,13 +54,8 @@ setInterval(() => {
   const c2 = (Math.sin(time/4000) + 1) * 128;
   const c3 = (Math.sin(time/3000) + 1) * 128;
   aurora.fillRect({
-    color: aurora.color.rgb(c1, c2, c3),
-    rect: {
-      x,
-      y,
-      w: 50,
-      h: 50,
-    }
+    color: hover ? aurora.color.blue : aurora.color.rgb(c1, c2, c3),
+    rect: { x, y, w, h }
   });
   aurora.render();
 }, 1000 / 60);

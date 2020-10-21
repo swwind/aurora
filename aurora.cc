@@ -8,6 +8,12 @@ Napi::Value BindKeyEventCallback(const Napi::CallbackInfo& info) {
 	RenderCallbacks::registerKeyEventCallback(env, fn);
 	return env.Undefined();
 }
+Napi::Value BindMouseEventCallback(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	Napi::Function fn = info[0].As<Napi::Function>();
+	RenderCallbacks::registerMouseEventCallback(env, fn);
+	return env.Undefined();
+}
 
 Napi::Value DrawLine(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
@@ -69,6 +75,7 @@ Napi::Value RenderInit(const Napi::CallbackInfo& info) {
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	exports["startEventLoop"] = Napi::Function::New(env, StartEventLoop);
 	exports["bindKeyEventCallback"] = Napi::Function::New(env, BindKeyEventCallback);
+	exports["bindMouseEventCallback"] = Napi::Function::New(env, BindMouseEventCallback);
 
 	// geometry
 	exports["drawLine"] = Napi::Function::New(env, DrawLine);

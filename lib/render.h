@@ -10,10 +10,8 @@
 
 namespace RenderCallbacks {
 
-void keyDownEventCallback(Napi::Env env, Napi::Function fn, int* e);
-void keyUpEventCallback(Napi::Env env, Napi::Function fn, int* e);
-
 void registerKeyEventCallback(Napi::Env env, const Napi::Function& fn);
+void registerMouseEventCallback(Napi::Env env, const Napi::Function& fn);
 
 } // namespace RenderCallbacks
 

@@ -7,8 +7,8 @@ KPoint parsePoint(Napi::Env* env, Napi::Value point) {
   }
 
   Napi::Object obj = point.As<Napi::Object>();
-  Napi::Value xx = obj.Get(Napi::String::New(*env, "x"));
-  Napi::Value yy = obj.Get(Napi::String::New(*env, "y"));
+  Napi::Value xx = obj.Get("x");
+  Napi::Value yy = obj.Get("y");
   if (!xx.IsNumber() || !yy.IsNumber()) {
     Napi::TypeError::New(*env, "Invalid point format")
       .ThrowAsJavaScriptException();
@@ -27,10 +27,10 @@ KRect parseRect(Napi::Env* env, Napi::Value rect) {
   }
 
   Napi::Object obj = rect.As<Napi::Object>();
-  Napi::Value xx = obj.Get(Napi::String::New(*env, "x"));
-  Napi::Value yy = obj.Get(Napi::String::New(*env, "y"));
-  Napi::Value ww = obj.Get(Napi::String::New(*env, "w"));
-  Napi::Value hh = obj.Get(Napi::String::New(*env, "h"));
+  Napi::Value xx = obj.Get("x");
+  Napi::Value yy = obj.Get("y");
+  Napi::Value ww = obj.Get("w");
+  Napi::Value hh = obj.Get("h");
   if (!xx.IsNumber() || !yy.IsNumber() || !ww.IsNumber() || !hh.IsNumber()) {
     Napi::TypeError::New(*env, "Invalid rect format")
       .ThrowAsJavaScriptException();
@@ -50,10 +50,10 @@ KColor parseColor(Napi::Env* env, Napi::Value color) {
       .ThrowAsJavaScriptException();
   }
   Napi::Object obj = color.As<Napi::Object>();
-  Napi::Value rr = obj.Get(Napi::String::New(*env, "r"));
-  Napi::Value gg = obj.Get(Napi::String::New(*env, "g"));
-  Napi::Value bb = obj.Get(Napi::String::New(*env, "b"));
-  Napi::Value aa = obj.Get(Napi::String::New(*env, "a"));
+  Napi::Value rr = obj.Get("r");
+  Napi::Value gg = obj.Get("g");
+  Napi::Value bb = obj.Get("b");
+  Napi::Value aa = obj.Get("a");
   if (!rr.IsNumber() || !gg.IsNumber() || !bb.IsNumber() || !aa.IsNumber()) {
     Napi::TypeError::New(*env, "Invalid color format")
       .ThrowAsJavaScriptException();

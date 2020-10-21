@@ -4,6 +4,16 @@ aurora.bindKeyEventCallback((e) => {
   console.log(e.type, e.key)
 });
 
+aurora.bindMouseEventCallback((e) => {
+  console.log(e.type, e.x, e.y);
+  if (e.type == 'mousedown' || e.type == 'mouseup') {
+    console.log(e.button);
+  }
+  if (e.type == 'mousewheel') {
+    console.log(e.dx, e.dy);
+  }
+});
+
 if (!aurora.init()) {
   console.log('failed to create window');
   process.exit(1);

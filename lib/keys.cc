@@ -1,9 +1,32 @@
 #include "keys.h"
 
-#define key(a) \
-  case SDLK_ ## a: return Napi::String::New(env, #a)
+std::string getEventType(uint32_t type) {
+	switch (type) {
+	case SDL_KEYDOWN: return "keydown";
+	case SDL_KEYUP: return "keyup";
+	case SDL_MOUSEBUTTONDOWN: return "mousedown";
+	case SDL_MOUSEBUTTONUP: return "mouseup";
+	case SDL_MOUSEWHEEL: return "mousewheel";
+	case SDL_MOUSEMOTION: return "mousemove";
+	}
+	return "unknown";
+}
 
-Napi::String SDL_KeyCode_to_string(const Napi::Env& env, SDL_KeyCode x) {
+std::string getMouseType(uint8_t type) {
+  switch (type) {
+  case SDL_BUTTON_MIDDLE: return "middle";
+  case SDL_BUTTON_LEFT: return "left";
+  case SDL_BUTTON_RIGHT: return "right";
+  case SDL_BUTTON_X1: return "x1";
+  case SDL_BUTTON_X2: return "x2";
+  }
+  return "unknown";
+}
+
+#define key(a) \
+  case SDLK_ ## a: return #a
+
+std::string getKeyCode(uint32_t x) {
   switch (x) {
     key(UNKNOWN);
     key(RETURN);
@@ -247,5 +270,5 @@ Napi::String SDL_KeyCode_to_string(const Napi::Env& env, SDL_KeyCode x) {
     key(AUDIOFASTFORWARD);
   }
 
-  return Napi::String::New(env, "FATAL ERROR");
+  return "FATAL ERROR";
 }
