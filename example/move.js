@@ -24,15 +24,13 @@ aurora.bindMouseEventCallback((e) => {
     w = Math.max(0, w + 5 * e.dy);
     h = Math.max(0, h + 5 * e.dy);
   }
-})
+});
 
 if (!aurora.init()) {
   console.log('failed to create window');
   process.exit(1);
 } else {
-  aurora.startEventLoop(() => {
-    process.exit(0);
-  });
+  aurora.startEventLoop();
 }
 
 setInterval(() => {

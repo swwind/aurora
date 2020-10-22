@@ -14,11 +14,32 @@ aurora.bindMouseEventCallback((e) => {
   }
 });
 
-if (!aurora.init()) {
+aurora.bindWindowEventCallback((e) => {
+  console.log('window event', e.type);
+  if (e.type === 'quit') {
+    aurora.quit();
+  }
+  if (e.type === 'windowmoved') {
+    console.log('new pos:', e.x, e.y);
+  }
+  if (e.type === 'windowresized' || e.type === 'windowsizechanged') {
+    console.log('new size:', e.w, e.h);
+  }
+});
+
+if (!aurora.init({
+  title: 'hello world',
+  w: 1280,
+  h: 720,
+  x: 'center',
+  y: 'center',
+  // resizable: true,
+})) {
   console.log('failed to create window');
   process.exit(1);
 } else {
   aurora.startEventLoop(() => {
+    aurora.close();
     process.exit(0);
   });
 }

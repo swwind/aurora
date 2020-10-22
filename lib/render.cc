@@ -11,11 +11,12 @@ std::map<int, SDL_Texture*> textureMap;
 
 std::vector<Napi::ThreadSafeFunction>
 	keyEventCallbackList,
-	mouseEventCallbackList;
+	mouseEventCallbackList,
+	windowEventCallbackList;
 
 void keyEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	Napi::Object result = Napi::Object::New(env);
-	result["type"] = getEventType(e->type);
+	result["type"] = getEventType(e);
 	result["keycode"] = e->key.keysym.sym;
 	result["key"] = getKeyCode(e->key.keysym.sym);
 
@@ -27,7 +28,7 @@ void mouseEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	SDL_GetMouseState(&x, &y);
 
 	Napi::Object result = Napi::Object::New(env);
-	result["type"] = getEventType(e->type);
+	result["type"] = getEventType(e);
 	result["x"] = x;
 	result["y"] = y;
 
@@ -43,6 +44,24 @@ void mouseEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	fn.Call({ result });
 	delete e;
 }
+void windowEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
+	Napi::Object result = Napi::Object::New(env);
+	result["type"] = getEventType(e);
+
+	if (e->type == SDL_WINDOWEVENT) {
+		if (e->window.event == SDL_WINDOWEVENT_RESIZED || e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+			result["w"] = e->window.data1;
+			result["h"] = e->window.data2;
+		}
+		if (e->window.event == SDL_WINDOWEVENT_MOVED) {
+			result["x"] = e->window.data1;
+			result["y"] = e->window.data2;
+		}
+	}
+
+	fn.Call({ result });
+	delete e;
+}
 
 void RenderCallbacks::registerKeyEventCallback(Napi::Env env, const Napi::Function& fn) {
 	keyEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
@@ -52,6 +71,12 @@ void RenderCallbacks::registerKeyEventCallback(Napi::Env env, const Napi::Functi
 }
 void RenderCallbacks::registerMouseEventCallback(Napi::Env env, const Napi::Function& fn) {
 	mouseEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
+		env, fn, "Ireina saikou!!", 0, 1,
+		[] (Napi::Env) { }
+	));
+}
+void RenderCallbacks::registerWindowEventCallback(Napi::Env env, const Napi::Function& fn) {
+	windowEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
 		env, fn, "Ireina saikou!!", 0, 1,
 		[] (Napi::Env) { }
 	));
@@ -91,22 +116,24 @@ void Render::RenderPresent() {
 	SDL_RenderPresent(gRenderer);
 }
 
-bool Render::registerTexture(int id, std::string src) {
+int cnt = 0;
+int Render::registerTexture(std::string src) {
   SDL_Texture* texture = loadTexture(src);
   if (texture == NULL) {
     return false;
   }
-  textureMap.insert(std::make_pair(id, texture));
-  return true;
+	int id = ++ cnt;
+  textureMap.insert(std::make_pair(cnt, texture));
+  return id;
 }
 
-bool Render::init() {
+bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow(title, x, y, w, h, flags);
 	if (gWindow == NULL) {
 		return false;
 	}
@@ -124,13 +151,17 @@ bool Render::init() {
 	return true;
 }
 
+bool quit = false;
+void Render::quit() {
+	::quit = true;
+}
+
 void Render::close() {
 	for (auto &pr : textureMap) {
 		SDL_DestroyTexture(pr.second);
 		pr.second = NULL;
 	}
 
-	//Destroy window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
@@ -142,12 +173,14 @@ void Render::close() {
 }
 
 void Render::eventLoop() {
-	bool quit = false;
+	::quit = false;
 	SDL_Event e;
-	while (!quit) {
+	while (!::quit) {
 		while (SDL_PollEvent(&e)) {
-			if( e.type == SDL_QUIT ) {
-				quit = true;
+			if (e.type == SDL_QUIT || e.type == SDL_WINDOWEVENT) {
+				for (auto& tsfn : windowEventCallbackList) {
+					tsfn.BlockingCall(new SDL_Event(e), windowEventCallback);
+				}
 			}
 			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
 				for (auto& tsfn : keyEventCallbackList) {

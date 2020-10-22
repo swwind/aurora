@@ -1,13 +1,35 @@
 #include "keys.h"
 
-std::string getEventType(uint32_t type) {
-	switch (type) {
+std::string getEventType(const SDL_Event* e) {
+	switch (e->type) {
 	case SDL_KEYDOWN: return "keydown";
 	case SDL_KEYUP: return "keyup";
 	case SDL_MOUSEBUTTONDOWN: return "mousedown";
 	case SDL_MOUSEBUTTONUP: return "mouseup";
 	case SDL_MOUSEWHEEL: return "mousewheel";
 	case SDL_MOUSEMOTION: return "mousemove";
+  case SDL_QUIT: return "quit";
+  case SDL_WINDOWEVENT:
+    switch (e->window.event) {
+    case SDL_WINDOWEVENT_NONE: return "windownone";
+    case SDL_WINDOWEVENT_SHOWN: return "windowshown";
+    case SDL_WINDOWEVENT_HIDDEN: return "windowhidden";
+    case SDL_WINDOWEVENT_EXPOSED: return "windowexposed";
+    case SDL_WINDOWEVENT_MOVED: return "windowmoved";
+    case SDL_WINDOWEVENT_RESIZED: return "windowresized";
+    case SDL_WINDOWEVENT_SIZE_CHANGED: return "windowsizechanged";
+    case SDL_WINDOWEVENT_MINIMIZED: return "windowminimized";
+    case SDL_WINDOWEVENT_MAXIMIZED: return "windowmaximized";
+    case SDL_WINDOWEVENT_RESTORED: return "windowrestored";
+    case SDL_WINDOWEVENT_ENTER: return "windowenter";
+    case SDL_WINDOWEVENT_LEAVE: return "windowleave";
+    case SDL_WINDOWEVENT_FOCUS_GAINED: return "windowfocusgained";
+    case SDL_WINDOWEVENT_FOCUS_LOST: return "windowfocuslost";
+    case SDL_WINDOWEVENT_CLOSE: return "windowclose";
+    case SDL_WINDOWEVENT_TAKE_FOCUS: return "windowtakefocus";
+    case SDL_WINDOWEVENT_HIT_TEST: return "windowhittest";
+    }
+    break;
 	}
 	return "unknown";
 }

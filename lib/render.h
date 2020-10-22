@@ -12,6 +12,7 @@ namespace RenderCallbacks {
 
 void registerKeyEventCallback(Napi::Env env, const Napi::Function& fn);
 void registerMouseEventCallback(Napi::Env env, const Napi::Function& fn);
+void registerWindowEventCallback(Napi::Env env, const Napi::Function& fn);
 
 } // namespace RenderCallbacks
 
@@ -25,8 +26,9 @@ void DrawPoint(const KPoint& p);
 void DrawRect(const KRect& r);
 void FillRect(const KRect& r);
 void RenderPresent();
-bool registerTexture(int id, std::string src);
-bool init();
+int registerTexture(std::string src);
+bool init(const char *title, int x, int y, int w, int h, Uint32 flags);
+void quit();
 void close();
 void eventLoop();
 
