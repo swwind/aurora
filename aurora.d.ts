@@ -74,8 +74,8 @@ type KWindowConfig = {
   title: string;
   w: number;
   h: number;
-  x?: number | 'center';
-  y?: number | 'center';
+  x?: number;
+  y?: number;
   fullscreen?: boolean;
   opengl?: boolean;
   shown?: boolean;
@@ -121,4 +121,6 @@ export const color: {
   red: KColor;
   green: KColor;
   blue: KColor;
+  white: KColor;
+  black: KColor;
 }

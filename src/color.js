@@ -4,10 +4,13 @@ function rgb(r, g, b) {
 function rgba(r, g, b, a) {
   return { r, g, b, a };
 }
-const blue = rgb(0, 0, 0xff);
-const green = rgb(0, 0xff, 0);
-const red = rgb(0, 0xff, 0);
 
 module.exports = {
-  rgb, rgba, blue, green, red
+  rgb,
+  rgba,
+  blue: rgb(0, 0, 0xff),
+  green: rgb(0, 0xff, 0),
+  red: rgb(0xff, 0, 0),
+  white: rgb(0xff, 0xff, 0xff),
+  black: rgb(0, 0, 0),
 }

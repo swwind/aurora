@@ -5,34 +5,32 @@ This is a game engine based on SDL2.
 **WIP**
 
 ```js
-const aurora = require('..');
+const aurora = require('@swwind/aurora');
 
-aurora.bindKeyEventCallback((e) => {
-  console.log(e.type, e.key)
+aurora.bindWindowEventCallback((e) => {
+  if (e.type === 'quit') {
+    aurora.quit();
+  }
 });
 
-if (!aurora.init()) {
+if (!aurora.init({
+  title: 'hello world',
+  w: 1280,
+  h: 720,
+})) {
   console.log('failed to create window');
   process.exit(1);
 } else {
   aurora.startEventLoop(() => {
+    aurora.close();
     process.exit(0);
   });
 }
 
 setInterval(() => {
-  const time = Date.now();
-  const c1 = (Math.sin(time/5000) + 1) * 128;
-  const c2 = (Math.sin(time/4000) + 1) * 128;
-  const c3 = (Math.sin(time/3000) + 1) * 128;
   aurora.fillRect({
-    color: aurora.color.rgb(c1, c2, c3),
-    rect: {
-      x: 200 + 200 * Math.sin(time / 500),
-      y: 200 + 200 * Math.cos(time / 500),
-      w: 50,
-      h: 50,
-    }
+    color: aurora.color.white,
+    rect: { x: 0, y: 0, w: 1280, h: 720 },
   });
   aurora.render();
 }, 1000 / 60);
@@ -51,6 +49,7 @@ sudo pacman -S sdl2 sdl2_image sdl2_ttf sdl2_mixer
 Then, you can try to run the example:
 
 ```bash
-npm install
-npm test
+yarn
+yarn build
+yarn test
 ```

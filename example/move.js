@@ -25,12 +25,24 @@ aurora.bindMouseEventCallback((e) => {
     h = Math.max(0, h + 5 * e.dy);
   }
 });
+aurora.bindWindowEventCallback((e) => {
+  if (e.type === 'quit') {
+    aurora.quit();
+  }
+});
 
-if (!aurora.init()) {
+if (!aurora.init({
+  title: 'Genshin Impact',
+  w: 1280,
+  h: 720,
+})) {
   console.log('failed to create window');
   process.exit(1);
 } else {
-  aurora.startEventLoop();
+  aurora.startEventLoop(() => {
+    aurora.close();
+    process.exit(0);
+  });
 }
 
 setInterval(() => {
@@ -51,6 +63,10 @@ setInterval(() => {
   const c1 = (Math.sin(time/5000) + 1) * 128;
   const c2 = (Math.sin(time/4000) + 1) * 128;
   const c3 = (Math.sin(time/3000) + 1) * 128;
+  aurora.fillRect({
+    color: aurora.color.white,
+    rect: { x: 0, y: 0, w: 1280, h: 720 },
+  });
   aurora.fillRect({
     color: hover ? aurora.color.blue : aurora.color.rgb(c1, c2, c3),
     rect: { x, y, w, h }

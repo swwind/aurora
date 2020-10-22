@@ -1,13 +1,13 @@
 {
-  "name": "aurora",
-  "version": "0.0.0",
-  "description": "A game engine based on SDL2",
+  "name": "@swwind/aurora",
+  "version": "0.0.0-alpha",
+  "description": "A little game engine based on SDL2",
   "main": "aurora.js",
-  "private": true,
   "dependencies": {
     "bindings": "~1.2.1",
     "node-addon-api": "^1.0.0"
   },
+  "license": "MIT",
   "scripts": {
     "test": "node example/move.js",
     "build": "node-gyp rebuild"

@@ -83,19 +83,11 @@ Napi::Value RenderInit(const Napi::CallbackInfo& info) {
 	std::string title = config.Get("title").As<Napi::String>();
 	int w = config.Get("w").As<Napi::Number>().Int32Value();
 	int h = config.Get("h").As<Napi::Number>().Int32Value();
-	int x = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
+	int x = SDL_WINDOWPOS_CENTERED, y = SDL_WINDOWPOS_CENTERED;
 	Napi::Value xx = config.Get("x");
-	if (xx.IsNumber()) {
-		x = xx.As<Napi::Number>().Int32Value();
-	} else if (xx.IsString()) {
-		x = SDL_WINDOWPOS_CENTERED;
-	}
+	if (xx.IsNumber()) { x = xx.As<Napi::Number>().Int32Value(); }
 	Napi::Value yy = config.Get("y");
-	if (yy.IsNumber()) {
-		y = yy.As<Napi::Number>().Int32Value();
-	} else if (yy.IsString()) {
-		y = SDL_WINDOWPOS_CENTERED;
-	}
+	if (yy.IsNumber()) { y = yy.As<Napi::Number>().Int32Value(); }
 
 	int flag = SDL_WINDOW_SHOWN;
 	CheckConfig("fullscreen", FULLSCREEN, false);
