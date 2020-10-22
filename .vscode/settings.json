@@ -1,0 +1,11 @@
+{
+  "C_Cpp.default.includePath": [
+    "${default}",
+    "./node_modules/node-addon-api",
+    "./node_modules/node-addon-api/src",
+  ],
+  "C_Cpp.default.defines": [
+    "${default}",
+    "NAPI_VERSION=7"
+  ]
+}
