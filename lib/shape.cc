@@ -1,29 +1,26 @@
 #include "shape.h"
 
-KPoint parsePoint(Napi::Env* env, Napi::Value point) {
+KPoint* parsePoint(const Napi::Value& point) {
   if (!point.IsObject()) {
-    Napi::TypeError::New(*env, "Invalid point format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
 
   Napi::Object obj = point.As<Napi::Object>();
   Napi::Value xx = obj.Get("x");
   Napi::Value yy = obj.Get("y");
   if (!xx.IsNumber() || !yy.IsNumber()) {
-    Napi::TypeError::New(*env, "Invalid point format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
 
   int x = xx.As<Napi::Number>().Int32Value();
   int y = yy.As<Napi::Number>().Int32Value();
 
-  return (KPoint) { x, y };
+  return new KPoint({ x, y });
 }
 
-KRect parseRect(Napi::Env* env, Napi::Value rect) {
+KRect* parseRect(const Napi::Value& rect) {
   if (!rect.IsObject()) {
-    Napi::TypeError::New(*env, "Invalid rect format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
 
   Napi::Object obj = rect.As<Napi::Object>();
@@ -32,8 +29,7 @@ KRect parseRect(Napi::Env* env, Napi::Value rect) {
   Napi::Value ww = obj.Get("w");
   Napi::Value hh = obj.Get("h");
   if (!xx.IsNumber() || !yy.IsNumber() || !ww.IsNumber() || !hh.IsNumber()) {
-    Napi::TypeError::New(*env, "Invalid rect format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
 
   int x = xx.As<Napi::Number>().Int32Value();
@@ -41,13 +37,12 @@ KRect parseRect(Napi::Env* env, Napi::Value rect) {
   int w = ww.As<Napi::Number>().Int32Value();
   int h = hh.As<Napi::Number>().Int32Value();
 
-  return { x, y, w, h };
+  return new KRect({ x, y, w, h });
 }
 
-KColor parseColor(Napi::Env* env, Napi::Value color) {
+KColor* parseColor(const Napi::Value& color) {
   if (!color.IsObject()) {
-    Napi::TypeError::New(*env, "Invalid color format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
   Napi::Object obj = color.As<Napi::Object>();
   Napi::Value rr = obj.Get("r");
@@ -55,8 +50,7 @@ KColor parseColor(Napi::Env* env, Napi::Value color) {
   Napi::Value bb = obj.Get("b");
   Napi::Value aa = obj.Get("a");
   if (!rr.IsNumber() || !gg.IsNumber() || !bb.IsNumber() || !aa.IsNumber()) {
-    Napi::TypeError::New(*env, "Invalid color format")
-      .ThrowAsJavaScriptException();
+    return NULL;
   }
 
   // FIXME: maybe dangerous here
@@ -65,5 +59,5 @@ KColor parseColor(Napi::Env* env, Napi::Value color) {
   uint8_t b = bb.As<Napi::Number>().Uint32Value();
   uint8_t a = aa.As<Napi::Number>().Uint32Value();
 
-  return (KColor) { r, g, b, a };
+  return new KColor({ r, g, b, a });
 }

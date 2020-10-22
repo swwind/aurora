@@ -1,9 +1,5 @@
 #include "render.h"
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
@@ -77,7 +73,7 @@ void RenderCallbacks::registerMouseEventCallback(Napi::Env env, const Napi::Func
 }
 void RenderCallbacks::registerWindowEventCallback(Napi::Env env, const Napi::Function& fn) {
 	windowEventCallbackList.push_back(Napi::ThreadSafeFunction::New(
-		env, fn, "Ireina saikou!!", 0, 1,
+		env, fn, "Kotori saikou!!", 0, 1,
 		[] (Napi::Env) { }
 	));
 }
@@ -93,23 +89,30 @@ SDL_Texture* loadTexture(std::string path) {
 	return newTexture;
 }
 
-void Render::SetColor(const KColor& color) {
-	SDL_SetRenderDrawColor(gRenderer, color.r, color.g, color.b, color.a);
+void Render::SetColor(const KColor* color) {
+	SDL_SetRenderDrawColor(gRenderer, color->r, color->g, color->b, color->a);
 }
 
-void Render::DrawLine(const KPoint& st, const KPoint& ed) {
-	SDL_RenderDrawLine(gRenderer, st.x, st.y, ed.x, ed.y);
+void Render::DrawLine(const KPoint* st, const KPoint* ed) {
+	SDL_RenderDrawLine(gRenderer, st->x, st->y, ed->x, ed->y);
 }
 
-void Render::DrawPoint(const KPoint& p) {
-	SDL_RenderDrawPoint(gRenderer, p.x, p.y);
+void Render::DrawPoint(const KPoint* p) {
+	SDL_RenderDrawPoint(gRenderer, p->x, p->y);
 }
 
-void Render::DrawRect(const KRect& r) {
-	SDL_RenderDrawRect(gRenderer, &r);
+void Render::DrawRect(const KRect* r) {
+	SDL_RenderDrawRect(gRenderer, r);
 }
-void Render::FillRect(const KRect& r) {
-	SDL_RenderFillRect(gRenderer, &r);
+void Render::FillRect(const KRect* r) {
+	SDL_RenderFillRect(gRenderer, r);
+}
+void Render::DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect) {
+	auto res = textureMap.find(tid);
+	if (res == textureMap.end()) {
+		return;
+	}
+	SDL_RenderCopy(gRenderer, res -> second, srcrect, dstrect);
 }
 
 void Render::RenderPresent() {
@@ -129,7 +132,6 @@ int Render::registerTexture(std::string src) {
 
 bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
 
@@ -143,7 +145,7 @@ bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 		return false;
 	}
 
-	const int imgflag = IMG_INIT_PNG;
+	const int imgflag = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP;
 	if((IMG_Init(imgflag) & imgflag) != imgflag) {
 		return false;
 	}
@@ -167,7 +169,6 @@ void Render::close() {
 	gWindow = NULL;
 	gRenderer = NULL;
 
-	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
 }

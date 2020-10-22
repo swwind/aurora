@@ -70,6 +70,12 @@ type KDrawRectConfig = {
   rect: KRect;
 }
 
+type KDrawImageConfig = {
+  texture: number;
+  srcrect?: KRect;
+  dstrect?: KRect;
+}
+
 type KWindowConfig = {
   title: string;
   w: number;
@@ -109,11 +115,14 @@ export function drawLine(config: KDrawLineConfig): void;
 export function drawPoint(config: KDrawPointConfig): void;
 export function drawRect(config: KDrawRectConfig): void;
 export function fillRect(config: KDrawRectConfig): void;
+export function drawImage(config: KDrawImageConfig): void;
 
 export function init(config: KWindowConfig): boolean;
 export function quit(): void;
 export function render(): void;
 export function close(): void;
+
+export function registerTexture(path: string): number;
 
 export const color: {
   rgb(r: number, g: number, b: number): KColor;

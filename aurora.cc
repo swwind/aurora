@@ -24,46 +24,68 @@ Napi::Value BindWindowEventCallback(const Napi::CallbackInfo& info) {
 Napi::Value DrawLine(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	Napi::Object config = info[0].As<Napi::Object>();
-	KColor color = parseColor(&env, config.Get("color"));
-	KPoint st = parsePoint(&env, config.Get("start"));
-	KPoint ed = parsePoint(&env, config.Get("end"));
+	KColor* color = parseColor(config.Get("color"));
+	KPoint* st = parsePoint(config.Get("start"));
+	KPoint* ed = parsePoint(config.Get("end"));
 
 	Render::SetColor(color);
 	Render::DrawLine(st, ed);
 
+	delete color;
+	delete st;
+	delete ed;
 	return env.Undefined();
 }
 Napi::Value DrawPoint(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	Napi::Object config = info[0].As<Napi::Object>();
-	KColor color = parseColor(&env, config.Get("color"));
-	KPoint point = parsePoint(&env, config.Get("point"));
+	KColor* color = parseColor(config.Get("color"));
+	KPoint* point = parsePoint(config.Get("point"));
 
 	Render::SetColor(color);
 	Render::DrawPoint(point);
 
+	delete color;
+	delete point;
 	return env.Undefined();
 }
 Napi::Value DrawRect(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	Napi::Object config = info[0].As<Napi::Object>();
-	KColor color = parseColor(&env, config.Get("color"));
-	KRect rect = parseRect(&env, config.Get("rect"));
+	KColor* color = parseColor(config.Get("color"));
+	KRect* rect = parseRect(config.Get("rect"));
 
 	Render::SetColor(color);
 	Render::DrawRect(rect);
 
+	delete color;
+	delete rect;
 	return env.Undefined();
 }
 Napi::Value FillRect(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	Napi::Object config = info[0].As<Napi::Object>();
-	KColor color = parseColor(&env, config.Get("color"));
-	KRect rect = parseRect(&env, config.Get("rect"));
+	KColor* color = parseColor(config.Get("color"));
+	KRect* rect = parseRect(config.Get("rect"));
 
 	Render::SetColor(color);
 	Render::FillRect(rect);
 
+	delete color;
+	delete rect;
+	return env.Undefined();
+}
+Napi::Value DrawImage(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	Napi::Object config = info[0].As<Napi::Object>();
+	int texture = config.Get("texture").As<Napi::Number>().Int32Value();
+	KRect* srcrect = parseRect(config.Get("srcrect"));
+	KRect* dstrect = parseRect(config.Get("dstrect"));
+
+	Render::DrawImage(texture, srcrect, dstrect);
+
+	delete srcrect;
+	delete dstrect;
 	return env.Undefined();
 }
 
@@ -123,6 +145,12 @@ Napi::Value RenderClose(const Napi::CallbackInfo& info) {
 	Render::close();
 	return info.Env().Undefined();
 }
+Napi::Value RegisterTexture(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	std::string src = info[0].As<Napi::String>();
+	int tid = Render::registerTexture(src);
+	return Napi::Number::New(env, tid);
+}
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	exports["startEventLoop"] = Napi::Function::New(env, StartEventLoop);
@@ -135,12 +163,16 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	exports["drawPoint"] = Napi::Function::New(env, DrawPoint);
 	exports["drawRect"] = Napi::Function::New(env, DrawRect);
 	exports["fillRect"] = Napi::Function::New(env, FillRect);
+	exports["drawImage"] = Napi::Function::New(env, DrawImage);
 
 	// render
 	exports["init"] = Napi::Function::New(env, RenderInit);
 	exports["quit"] = Napi::Function::New(env, RenderQuit);
 	exports["render"] = Napi::Function::New(env, RenderPresent);
 	exports["close"] = Napi::Function::New(env, RenderClose);
+
+	// sources
+	exports["registerTexture"] = Napi::Function::New(env, RegisterTexture);
   return exports;
 }
 
