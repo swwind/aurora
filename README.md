@@ -20,18 +20,16 @@ if (!aurora.init({
 })) {
   console.log('failed to create window');
   process.exit(1);
-} else {
-  aurora.startEventLoop(() => {
-    aurora.close();
-    process.exit(0);
-  });
 }
 
+aurora.startEventLoop(() => {
+  // app quitted
+  aurora.close();
+  process.exit(0);
+});
+
 setInterval(() => {
-  aurora.fillRect({
-    color: aurora.color.white,
-    rect: { x: 0, y: 0, w: 1280, h: 720 },
-  });
+  aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
   aurora.render();
 }, 1000 / 60);
 ```
