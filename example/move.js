@@ -1,7 +1,6 @@
 const aurora = require('..');
 
 const keys = { };
-let hover = false;
 let x = 100, y = 100, w = 50, h = 50;
 let lasttime = Date.now();
 
@@ -13,13 +12,6 @@ aurora.bindKeyEventCallback((e) => {
   }
 });
 aurora.bindMouseEventCallback((e) => {
-  if (e.type === 'mousemove') {
-    if (e.x >= x && e.y >= y && e.x <= x + 50 && e.y <= y + 50) {
-      hover = true;
-    } else {
-      hover = false;
-    }
-  }
   if (e.type === 'mousewheel') {
     w = Math.max(0, w + 5 * e.dy);
     h = Math.max(0, h + 5 * e.dy);
@@ -35,17 +27,20 @@ if (!aurora.init({
   title: 'Genshin Impact',
   w: 1280,
   h: 720,
+  opengl: true,
 })) {
   console.log('failed to create window');
   process.exit(1);
-} else {
-  aurora.startEventLoop(() => {
-    aurora.close();
-    process.exit(0);
-  });
 }
 
+aurora.startEventLoop(() => {
+  aurora.close();
+  process.exit(0);
+});
+
 const huaji = aurora.registerTexture('example/huaji.png');
+const genshin = aurora.registerFont('tmp/genshin.ttf', 42);
+const fonts = aurora.renderText(genshin.id, '你们啊，还是太年轻了 不要老是想搞个大新闻 就把我批判一番', aurora.color.black);
 
 setInterval(() => {
   const time = Date.now();
@@ -54,10 +49,8 @@ setInterval(() => {
   if (keys["a"] || keys["LEFT"])  { x -= 0.5 * (time - lasttime); }
   if (keys["d"] || keys["RIGHT"]) { x += 0.5 * (time - lasttime); }
   lasttime = time;
-  aurora.fillRect({
-    color: aurora.color.white,
-    rect: { x: 0, y: 0, w: 1280, h: 720 },
-  });
-  aurora.drawImage({ texture: huaji, dstrect: { x, y, w, h } });
+  aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
+  aurora.drawImage(fonts.id, { x: 0, y: 0, w: fonts.width, h: fonts.height });
+  aurora.drawImage(huaji.id, { x, y, w, h });
   aurora.render();
 }, 1000 / 60);

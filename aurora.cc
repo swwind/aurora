@@ -23,10 +23,9 @@ Napi::Value BindWindowEventCallback(const Napi::CallbackInfo& info) {
 
 Napi::Value DrawLine(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
-	Napi::Object config = info[0].As<Napi::Object>();
-	KColor* color = parseColor(config.Get("color"));
-	KPoint* st = parsePoint(config.Get("start"));
-	KPoint* ed = parsePoint(config.Get("end"));
+	KPoint* st = parsePoint(info[0]);
+	KPoint* ed = parsePoint(info[1]);
+	KColor* color = parseColor(info[2]);
 
 	Render::SetColor(color);
 	Render::DrawLine(st, ed);
@@ -38,9 +37,8 @@ Napi::Value DrawLine(const Napi::CallbackInfo& info) {
 }
 Napi::Value DrawPoint(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
-	Napi::Object config = info[0].As<Napi::Object>();
-	KColor* color = parseColor(config.Get("color"));
-	KPoint* point = parsePoint(config.Get("point"));
+	KPoint* point = parsePoint(info[0]);
+	KColor* color = parseColor(info[1]);
 
 	Render::SetColor(color);
 	Render::DrawPoint(point);
@@ -51,9 +49,8 @@ Napi::Value DrawPoint(const Napi::CallbackInfo& info) {
 }
 Napi::Value DrawRect(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
-	Napi::Object config = info[0].As<Napi::Object>();
-	KColor* color = parseColor(config.Get("color"));
-	KRect* rect = parseRect(config.Get("rect"));
+	KRect* rect = parseRect(info[0]);
+	KColor* color = parseColor(info[1]);
 
 	Render::SetColor(color);
 	Render::DrawRect(rect);
@@ -64,9 +61,8 @@ Napi::Value DrawRect(const Napi::CallbackInfo& info) {
 }
 Napi::Value FillRect(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
-	Napi::Object config = info[0].As<Napi::Object>();
-	KColor* color = parseColor(config.Get("color"));
-	KRect* rect = parseRect(config.Get("rect"));
+	KRect* rect = parseRect(info[0]);
+	KColor* color = parseColor(info[1]);
 
 	Render::SetColor(color);
 	Render::FillRect(rect);
@@ -77,12 +73,11 @@ Napi::Value FillRect(const Napi::CallbackInfo& info) {
 }
 Napi::Value DrawImage(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
-	Napi::Object config = info[0].As<Napi::Object>();
-	int texture = config.Get("texture").As<Napi::Number>().Int32Value();
-	KRect* srcrect = parseRect(config.Get("srcrect"));
-	KRect* dstrect = parseRect(config.Get("dstrect"));
+	int tid = info[0].As<Napi::Number>().Int32Value();
+	KRect* dstrect = parseRect(info[1]);
+	KRect* srcrect = parseRect(info[2]);
 
-	Render::DrawImage(texture, srcrect, dstrect);
+	Render::DrawImage(tid, srcrect, dstrect);
 
 	delete srcrect;
 	delete dstrect;
@@ -96,7 +91,7 @@ Napi::Value RenderPresent(const Napi::CallbackInfo& info) {
 
 #define CheckConfig(a, b, c) \
 	if (config.Has(a) && config.Get(a).As<Napi::Boolean>().Value() != c) { \
-		flag ^= SDL_WINDOW_ ## b;\
+		flag ^= SDL_WINDOW_ ## b; \
 	}
 
 Napi::Value RenderInit(const Napi::CallbackInfo& info) {
@@ -145,20 +140,52 @@ Napi::Value RenderClose(const Napi::CallbackInfo& info) {
 	Render::close();
 	return info.Env().Undefined();
 }
+
 Napi::Value RegisterTexture(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	std::string src = info[0].As<Napi::String>();
-	int tid = Render::registerTexture(src);
-	return Napi::Number::New(env, tid);
+	KTexture* texture = Render::registerTexture(src);
+	Napi::Object ret = Napi::Object::New(env);
+	ret["id"] = texture->id;
+	ret["width"] = texture->width;
+	ret["height"] = texture->height;
+	delete texture;
+	return ret;
+}
+Napi::Value RegisterFont(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	std::string src = info[0].As<Napi::String>();
+	int size = info[1].As<Napi::Number>().Int32Value();
+	KFont* font = Render::registerFont(src, size);
+	Napi::Object ret = Napi::Object::New(env);
+	ret["id"] = font->id;
+	ret["size"] = font->size;
+	delete font;
+	return ret;
+}
+Napi::Value RenderText(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int fid = info[0].As<Napi::Number>().Int32Value();
+	std::string text = info[1].As<Napi::String>();
+	KColor* color = parseColor(info[2]);
+	KTexture* texture = Render::renderText(fid, text, color);
+	Napi::Object ret = Napi::Object::New(env);
+	ret["id"] = texture->id;
+	ret["width"] = texture->width;
+	ret["height"] = texture->height;
+	delete color;
+	delete texture;
+	return ret;
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+	// events
 	exports["startEventLoop"] = Napi::Function::New(env, StartEventLoop);
 	exports["bindKeyEventCallback"] = Napi::Function::New(env, BindKeyEventCallback);
 	exports["bindMouseEventCallback"] = Napi::Function::New(env, BindMouseEventCallback);
 	exports["bindWindowEventCallback"] = Napi::Function::New(env, BindWindowEventCallback);
 
-	// geometry
+	// drawing
 	exports["drawLine"] = Napi::Function::New(env, DrawLine);
 	exports["drawPoint"] = Napi::Function::New(env, DrawPoint);
 	exports["drawRect"] = Napi::Function::New(env, DrawRect);
@@ -173,6 +200,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
 	// sources
 	exports["registerTexture"] = Napi::Function::New(env, RegisterTexture);
+	exports["registerFont"] = Napi::Function::New(env, RegisterFont);
+	exports["renderText"] = Napi::Function::New(env, RenderText);
   return exports;
 }
 

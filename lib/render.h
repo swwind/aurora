@@ -3,10 +3,19 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <map>
 #include "napi.h"
 #include "keys.h"
 #include "shape.h"
+
+struct KTexture {
+  int id, width, height;
+};
+struct KFont {
+  int id, size;
+};
 
 namespace RenderCallbacks {
 
@@ -15,8 +24,6 @@ void registerMouseEventCallback(Napi::Env env, const Napi::Function& fn);
 void registerWindowEventCallback(Napi::Env env, const Napi::Function& fn);
 
 } // namespace RenderCallbacks
-
-SDL_Texture* loadTexture(std::string path);
 
 namespace Render {
 
@@ -27,7 +34,9 @@ void DrawRect(const KRect* r);
 void FillRect(const KRect* r);
 void DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect);
 void RenderPresent();
-int registerTexture(std::string src);
+KTexture* registerTexture(std::string src);
+KFont* registerFont(std::string src, int size);
+KTexture* renderText(const int& fid, std::string text, KColor* color);
 bool init(const char *title, int x, int y, int w, int h, Uint32 flags);
 void quit();
 void close();

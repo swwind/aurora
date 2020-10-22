@@ -5,7 +5,7 @@
 #include "napi.h"
 
 struct KPoint { int x, y; };
-struct KColor { uint8_t r, g, b, a; };
+typedef SDL_Color KColor;
 typedef SDL_Rect KRect;
 
 KPoint* parsePoint(const Napi::Value& point);

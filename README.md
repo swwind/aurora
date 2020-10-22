@@ -53,3 +53,9 @@ yarn
 yarn build
 yarn test
 ```
+
+## TODOs
+
+- [ ] SDL2 mixer
+- [ ] Error handler
+- [ ] Build on windows

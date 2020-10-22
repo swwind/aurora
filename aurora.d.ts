@@ -54,26 +54,14 @@ type KRect = {
   h: number;
 }
 
-type KDrawLineConfig = {
-  color: KColor;
-  start: KPoint;
-  end: KPoint;
+type KTexture = {
+  id: number;
+  width: number;
+  height: number;
 }
 
-type KDrawPointConfig = {
-  color: KColor;
-  point: KPoint;
-}
-
-type KDrawRectConfig = {
-  color: KColor;
-  rect: KRect;
-}
-
-type KDrawImageConfig = {
-  texture: number;
-  srcrect?: KRect;
-  dstrect?: KRect;
+type KFont = {
+  id: number;
 }
 
 type KWindowConfig = {
@@ -111,18 +99,20 @@ export function bindWindowEventCallback(fn: KWindowEventCallback): void;
 
 export function startEventLoop(fn?: KClosedCallback): void;
 
-export function drawLine(config: KDrawLineConfig): void;
-export function drawPoint(config: KDrawPointConfig): void;
-export function drawRect(config: KDrawRectConfig): void;
-export function fillRect(config: KDrawRectConfig): void;
-export function drawImage(config: KDrawImageConfig): void;
+export function drawLine(start: KPoint, end: KPoint, color: KColor): void;
+export function drawPoint(point: KPoint, color: KColor): void;
+export function drawRect(rect: KRect, color: KColor): void;
+export function fillRect(rect: KRect, color: KColor): void;
+export function drawImage(texture_id: number, dstrect: KRect, srcrect: KRect): void;
 
 export function init(config: KWindowConfig): boolean;
 export function quit(): void;
 export function render(): void;
 export function close(): void;
 
-export function registerTexture(path: string): number;
+export function registerTexture(src: string): KTexture;
+export function registerFont(src: string, size: number): KFont;
+export function renderText(font_id: number, text: string, color: KColor): KTexture;
 
 export const color: {
   rgb(r: number, g: number, b: number): KColor;
