@@ -54,6 +54,10 @@ yarn test
 
 ## TODOs
 
-- [ ] SDL2 mixer
+- [x] SDL2 image
+- [x] SDL2 ttf
+- [x] SDL2 mixer
+- [ ] Documents
 - [ ] Error handler
 - [ ] Build on windows
+- [ ] Release method

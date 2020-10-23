@@ -163,6 +163,24 @@ Napi::Value RegisterFont(const Napi::CallbackInfo& info) {
 	delete font;
 	return ret;
 }
+Napi::Value RegisterMusic(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	std::string src = info[0].As<Napi::String>();
+	KMusic* music = Render::registerMusic(src);
+	Napi::Object ret = Napi::Object::New(env);
+	ret["id"] = music->id;
+	delete music;
+	return ret;
+}
+Napi::Value RegisterSound(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	std::string src = info[0].As<Napi::String>();
+	KSound* sound = Render::registerSound(src);
+	Napi::Object ret = Napi::Object::New(env);
+	ret["id"] = sound->id;
+	delete sound;
+	return ret;
+}
 Napi::Value RenderText(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	int fid = info[0].As<Napi::Number>().Int32Value();
@@ -176,6 +194,34 @@ Napi::Value RenderText(const Napi::CallbackInfo& info) {
 	delete color;
 	delete texture;
 	return ret;
+}
+
+Napi::Value PlayMusic(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int mid = info[0].As<Napi::Number>().Int32Value();
+	int loops = info[1].As<Napi::Number>().Int32Value();
+	Render::playMusic(mid, loops);
+	return env.Undefined();
+}
+Napi::Value PauseMusic(const Napi::CallbackInfo& info) {
+	Render::pauseMusic();
+	return info.Env().Undefined();
+}
+Napi::Value ResumeMusic(const Napi::CallbackInfo& info) {
+	Render::resumeMusic();
+	return info.Env().Undefined();
+}
+Napi::Value ToggleMusic(const Napi::CallbackInfo& info) {
+	Render::toggleMusic();
+	return info.Env().Undefined();
+}
+Napi::Value PlaySound(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int sid = info[0].As<Napi::Number>().Int32Value();
+	int channel = info[1].As<Napi::Number>().Int32Value();
+	int loops = info[2].As<Napi::Number>().Int32Value();
+	Render::playSound(sid, channel, loops);
+	return env.Undefined();
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
@@ -201,7 +247,16 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	// sources
 	exports["registerTexture"] = Napi::Function::New(env, RegisterTexture);
 	exports["registerFont"] = Napi::Function::New(env, RegisterFont);
+	exports["registerMusic"] = Napi::Function::New(env, RegisterMusic);
+	exports["registerSound"] = Napi::Function::New(env, RegisterSound);
 	exports["renderText"] = Napi::Function::New(env, RenderText);
+
+	// sounds
+	exports["playMusic"] = Napi::Function::New(env, PlayMusic);
+	exports["pauseMusic"] = Napi::Function::New(env, PauseMusic);
+	exports["resumeMusic"] = Napi::Function::New(env, ResumeMusic);
+	exports["toggleMusic"] = Napi::Function::New(env, ToggleMusic);
+	exports["playSound"] = Napi::Function::New(env, PlaySound);
   return exports;
 }
 

@@ -4,11 +4,28 @@ const keys = { };
 let x = 100, y = 100, w = 50, h = 50;
 let lasttime = Date.now();
 
+let mx = null, my = null;
+
+if (!aurora.init({
+  title: 'Genshin Impact',
+  w: 1280,
+  h: 720,
+  opengl: true,
+  // fullscreen: true,
+})) {
+  console.log('failed to create window');
+  process.exit(1);
+}
+
 aurora.bindKeyEventCallback((e) => {
   if (e.type === "keydown") {
     keys[e.key] = true;
   } else if (e.type === "keyup") {
     keys[e.key] = false;
+  }
+
+  if (e.type === 'keydown' && e.key === 'p') {
+    aurora.toggleMusic();
   }
 });
 aurora.bindMouseEventCallback((e) => {
@@ -21,17 +38,12 @@ aurora.bindWindowEventCallback((e) => {
   if (e.type === 'quit') {
     aurora.quit();
   }
+  if (e.type === "windowmoved") {
+    if (mx != null) { x -= e.x - mx; }
+    if (my != null) { y -= e.y - my; }
+    mx = e.x; my = e.y;
+  }
 });
-
-if (!aurora.init({
-  title: 'Genshin Impact',
-  w: 1280,
-  h: 720,
-  opengl: true,
-})) {
-  console.log('failed to create window');
-  process.exit(1);
-}
 
 aurora.startEventLoop(() => {
   aurora.close();
@@ -40,7 +52,19 @@ aurora.startEventLoop(() => {
 
 const huaji = aurora.registerTexture('example/huaji.png');
 const genshin = aurora.registerFont('tmp/genshin.ttf', 42);
-const fonts = aurora.renderText(genshin.id, '你们啊，还是太年轻了 不要老是想搞个大新闻 就把我批判一番', aurora.color.black);
+const fonts = aurora.renderText(genshin.id, '10 次祈愿', aurora.color.black);
+const flac = aurora.registerMusic('tmp/aurora.wav');
+const sound = aurora.registerMusic('tmp/stayalive.wav');
+
+aurora.bindMouseEventCallback((e) => {
+  if (e.type == 'mousedown') {
+    if (e.x >= x && e.y >= y && e.x <= x+w && e.y <= y+h) {
+      aurora.playMusic(flac.id, -1);
+    }
+  }
+});
+
+aurora.playMusic(sound.id, -1);
 
 setInterval(() => {
   const time = Date.now();

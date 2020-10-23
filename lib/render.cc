@@ -5,7 +5,9 @@ SDL_Renderer* gRenderer = NULL;
 
 std::map<int, SDL_Texture*> textureMap;
 std::map<int, TTF_Font*> fontMap;
-int tcnt = 0, fcnt = 0;
+std::map<int, Mix_Music*> musicMap;
+std::map<int, Mix_Chunk*> soundMap;
+int tcnt = 0, fcnt = 0, mcnt = 0, scnt = 0;
 
 std::vector<Napi::ThreadSafeFunction>
 	keyEventCallbackList,
@@ -21,6 +23,16 @@ KFont* addFont(TTF_Font* font, int size) {
 	int id = ++ fcnt;
   fontMap.insert(std::make_pair(id, font));
   return new KFont({ id, size });
+}
+KMusic* addMusic(Mix_Music* music) {
+	int id = ++ mcnt;
+  musicMap.insert(std::make_pair(id, music));
+  return new KMusic({ id });
+}
+KSound* addSound(Mix_Chunk* sound) {
+	int id = ++ mcnt;
+  soundMap.insert(std::make_pair(id, sound));
+  return new KSound({ id });
 }
 
 void keyEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
@@ -91,6 +103,38 @@ void RenderCallbacks::registerWindowEventCallback(Napi::Env env, const Napi::Fun
 	));
 }
 
+void Render::playMusic(const int& mid, const int& times) {
+	auto res = musicMap.find(mid);
+	if (res == musicMap.end()) {
+		return;
+	}
+	Mix_PlayMusic(res->second, times);
+}
+void Render::pauseMusic() {
+	if (!Mix_PausedMusic()) {
+		Mix_PauseMusic();
+	}
+}
+void Render::resumeMusic() {
+	if (Mix_PausedMusic()) {
+		Mix_ResumeMusic();
+	}
+}
+void Render::toggleMusic() {
+	if (Mix_PausedMusic()) {
+		Mix_ResumeMusic();
+	} else {
+		Mix_PauseMusic();
+	}
+}
+void Render::playSound(const int& sid, const int& channel, const int& loops) {
+	auto res = soundMap.find(sid);
+	if (res == soundMap.end()) {
+		return;
+	}
+	Mix_PlayChannel(channel, res->second, loops);
+}
+
 void Render::SetColor(const KColor* color) {
 	SDL_SetRenderDrawColor(gRenderer, color->r, color->g, color->b, color->a);
 }
@@ -131,6 +175,20 @@ KTexture* Render::registerTexture(std::string src) {
 	SDL_FreeSurface(surface);
 	return kt;
 }
+KMusic* Render::registerMusic(std::string src) {
+	Mix_Music* music = Mix_LoadMUS(src.c_str());
+	if (music == NULL) {
+		return NULL;
+	}
+	return addMusic(music);
+}
+KSound* Render::registerSound(std::string src) {
+	Mix_Chunk* sound = Mix_LoadWAV(src.c_str());
+	if (sound == NULL) {
+		return NULL;
+	}
+	return addSound(sound);
+}
 KFont* Render::registerFont(std::string src, int size) {
 	TTF_Font* font = TTF_OpenFont(src.c_str(), size);
 	if (font == NULL) {
@@ -158,7 +216,7 @@ KTexture* Render::renderText(const int& fid, std::string text, KColor* color) {
 }
 
 bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		return false;
 	}
 
@@ -183,6 +241,10 @@ bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 		return false;
 	}
 
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -200,12 +262,21 @@ void Render::close() {
 		TTF_CloseFont(pr.second);
 		pr.second = NULL;
 	}
+	for (auto &pr : musicMap) {
+		Mix_FreeMusic(pr.second);
+		pr.second = NULL;
+	}
+	for (auto &pr : soundMap) {
+		Mix_FreeChunk(pr.second);
+		pr.second = NULL;
+	}
 
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 	gRenderer = NULL;
 
+	Mix_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();

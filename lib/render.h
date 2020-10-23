@@ -16,6 +16,12 @@ struct KTexture {
 struct KFont {
   int id, size;
 };
+struct KMusic {
+  int id;
+};
+struct KSound {
+  int id;
+};
 
 namespace RenderCallbacks {
 
@@ -35,12 +41,19 @@ void FillRect(const KRect* r);
 void DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect);
 void RenderPresent();
 KTexture* registerTexture(std::string src);
+KMusic* registerMusic(std::string src);
+KSound* registerSound(std::string src);
 KFont* registerFont(std::string src, int size);
 KTexture* renderText(const int& fid, std::string text, KColor* color);
 bool init(const char *title, int x, int y, int w, int h, Uint32 flags);
 void quit();
 void close();
 void eventLoop();
+void playMusic(const int& mid, const int& times);
+void pauseMusic();
+void resumeMusic();
+void toggleMusic();
+void playSound(const int& sid, const int& channel, const int& loops);
 
 } // namespace Render
 
