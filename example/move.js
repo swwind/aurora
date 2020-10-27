@@ -11,7 +11,7 @@ if (!aurora.init({
   w: 1280,
   h: 720,
   opengl: true,
-  // fullscreen: true,
+  fullscreen: true,
 })) {
   console.log('failed to create window');
   process.exit(1);
@@ -50,7 +50,7 @@ aurora.startEventLoop(() => {
   process.exit(0);
 });
 
-const huaji = aurora.registerTexture('example/huaji.png');
+const huaji = aurora.registerTexture('example/assets/huaji.png');
 const genshin = aurora.registerFont('tmp/genshin.ttf', 42);
 const fonts = aurora.renderText(genshin.id, '10 次祈愿', aurora.color.black);
 const flac = aurora.registerMusic('tmp/aurora.wav');
@@ -59,6 +59,7 @@ const sound = aurora.registerMusic('tmp/stayalive.wav');
 aurora.bindMouseEventCallback((e) => {
   if (e.type == 'mousedown') {
     if (e.x >= x && e.y >= y && e.x <= x+w && e.y <= y+h) {
+      // click on the image
       aurora.playMusic(flac.id, -1);
     }
   }
@@ -68,11 +69,13 @@ aurora.playMusic(sound.id, -1);
 
 setInterval(() => {
   const time = Date.now();
-  if (keys["w"] || keys["UP"])    { y -= 0.5 * (time - lasttime); }
-  if (keys["s"] || keys["DOWN"])  { y += 0.5 * (time - lasttime); }
-  if (keys["a"] || keys["LEFT"])  { x -= 0.5 * (time - lasttime); }
-  if (keys["d"] || keys["RIGHT"]) { x += 0.5 * (time - lasttime); }
+  const step = time - lasttime;
+  if (keys["w"] || keys["UP"])    { y -= 0.5 * step; }
+  if (keys["s"] || keys["DOWN"])  { y += 0.5 * step; }
+  if (keys["a"] || keys["LEFT"])  { x -= 0.5 * step; }
+  if (keys["d"] || keys["RIGHT"]) { x += 0.5 * step; }
   lasttime = time;
+
   aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
   aurora.drawImage(fonts.id, { x: 0, y: 0, w: fonts.width, h: fonts.height });
   aurora.drawImage(huaji.id, { x, y, w, h });
