@@ -45,7 +45,7 @@ KTexture* registerTexture(std::string src);
 KMusic* registerMusic(std::string src);
 KSound* registerSound(std::string src);
 KFont* registerFont(std::string src, int size);
-KTexture* renderText(const int& fid, std::string text, KColor* color);
+KTexture* renderText(const int& fid, std::string text, KColor* color, const __uint32_t& length);
 
 void deleteTexture(const int& texture_id);
 void deleteFont(const int& font_id);

@@ -52,7 +52,8 @@ aurora.startEventLoop(() => {
 
 const huaji = aurora.registerTexture('example/assets/huaji.png');
 const genshin = aurora.registerFont('tmp/genshin.ttf', 42);
-const fonts = aurora.renderText(genshin.id, '10 次祈愿', aurora.color.black);
+const fonts = aurora.renderText(genshin.id, '你是不是瞧不起中文？？？', aurora.color.black, 300);
+console.log(fonts);
 const flac = aurora.registerMusic('tmp/aurora.wav');
 
 aurora.bindMouseEventCallback((e) => {

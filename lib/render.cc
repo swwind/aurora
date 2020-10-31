@@ -196,13 +196,13 @@ KFont* Render::registerFont(std::string src, int size) {
 	}
 	return addFont(font, size);
 }
-KTexture* Render::renderText(const int& fid, std::string text, KColor* color) {
+KTexture* Render::renderText(const int& fid, std::string text, KColor* color, const __uint32_t& length) {
 	auto font = fontMap.find(fid);
 	if (font == fontMap.end()) {
 		return NULL;
 	}
 	// TODO more render options
-	SDL_Surface* surface = TTF_RenderUTF8_Blended(font->second, text.c_str(), *color);
+	SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font->second, text.c_str(), *color, length);
 	if (surface == NULL) {
 		return NULL;
 	}

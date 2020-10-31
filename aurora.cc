@@ -186,7 +186,8 @@ Napi::Value RenderText(const Napi::CallbackInfo& info) {
 	int fid = info[0].As<Napi::Number>().Int32Value();
 	std::string text = info[1].As<Napi::String>();
 	KColor* color = parseColor(info[2]);
-	KTexture* texture = Render::renderText(fid, text, color);
+	__uint32_t length = info[3].As<Napi::Number>().Int32Value();
+	KTexture* texture = Render::renderText(fid, text, color, length);
 	Napi::Object ret = Napi::Object::New(env);
 	ret["id"] = texture->id;
 	ret["width"] = texture->width;
