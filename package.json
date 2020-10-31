@@ -1,6 +1,6 @@
 {
   "name": "@swwind/aurora",
-  "version": "0.0.0-alpha.1",
+  "version": "0.0.0-alpha.2",
   "description": "A little game engine based on SDL2",
   "main": "aurora.js",
   "dependencies": {
