@@ -11,7 +11,7 @@ if (!aurora.init({
   w: 1280,
   h: 720,
   opengl: true,
-  fullscreen: true,
+  // fullscreen: true,
 })) {
   console.log('failed to create window');
   process.exit(1);
@@ -54,7 +54,6 @@ const huaji = aurora.registerTexture('example/assets/huaji.png');
 const genshin = aurora.registerFont('tmp/genshin.ttf', 42);
 const fonts = aurora.renderText(genshin.id, '10 次祈愿', aurora.color.black);
 const flac = aurora.registerMusic('tmp/aurora.wav');
-const sound = aurora.registerMusic('tmp/stayalive.wav');
 
 aurora.bindMouseEventCallback((e) => {
   if (e.type == 'mousedown') {
@@ -64,8 +63,6 @@ aurora.bindMouseEventCallback((e) => {
     }
   }
 });
-
-aurora.playMusic(sound.id, -1);
 
 setInterval(() => {
   const time = Date.now();

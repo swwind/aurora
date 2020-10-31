@@ -224,6 +224,31 @@ Napi::Value PlaySound(const Napi::CallbackInfo& info) {
 	return env.Undefined();
 }
 
+Napi::Value DeleteTexture(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int texture_id = info[0].As<Napi::Number>().Int32Value();
+	Render::deleteTexture(texture_id);
+	return env.Undefined();
+}
+Napi::Value DeleteFont(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int font_id = info[0].As<Napi::Number>().Int32Value();
+	Render::deleteFont(font_id);
+	return env.Undefined();
+}
+Napi::Value DeleteMusic(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int music_id = info[0].As<Napi::Number>().Int32Value();
+	Render::deleteMusic(music_id);
+	return env.Undefined();
+}
+Napi::Value DeleteSound(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int sound_id = info[0].As<Napi::Number>().Int32Value();
+	Render::deleteSound(sound_id);
+	return env.Undefined();
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	// events
 	exports["startEventLoop"] = Napi::Function::New(env, StartEventLoop);
@@ -250,6 +275,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	exports["registerMusic"] = Napi::Function::New(env, RegisterMusic);
 	exports["registerSound"] = Napi::Function::New(env, RegisterSound);
 	exports["renderText"] = Napi::Function::New(env, RenderText);
+	exports["deleteTexture"] = Napi::Function::New(env, DeleteTexture);
+	exports["deleteFont"] = Napi::Function::New(env, DeleteFont);
+	exports["deleteMusic"] = Napi::Function::New(env, DeleteMusic);
+	exports["deleteSound"] = Napi::Function::New(env, DeleteSound);
 
 	// sounds
 	exports["playMusic"] = Napi::Function::New(env, PlayMusic);

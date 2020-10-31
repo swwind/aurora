@@ -414,6 +414,10 @@ export function registerFont(src: string, size: number): KFont;
  * @param color text color
  */
 export function renderText(font_id: number, text: string, color: KColor): KTexture;
+export function deleteTexture(texture_id: number): void;
+export function deleteFont(font_id: number): void;
+export function deleteMusic(music_id: number): void;
+export function deleteSound(sound_id: number): void;
 
 /**
  * Play a music

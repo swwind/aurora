@@ -215,6 +215,39 @@ KTexture* Render::renderText(const int& fid, std::string text, KColor* color) {
 	return kt;
 }
 
+void Render::deleteTexture(const int& texture_id) {
+	auto res = textureMap.find(texture_id);
+	if (res != textureMap.end()) {
+		SDL_DestroyTexture(res -> second);
+		res -> second = NULL;
+		textureMap.erase(res);
+	}
+}
+void Render::deleteFont(const int& font_id) {
+	auto res = fontMap.find(font_id);
+	if (res != fontMap.end()) {
+		TTF_CloseFont(res -> second);
+		res -> second = NULL;
+		fontMap.erase(res);
+	}
+}
+void Render::deleteMusic(const int& music_id) {
+	auto res = musicMap.find(music_id);
+	if (res != musicMap.end()) {
+		Mix_FreeMusic(res -> second);
+		res -> second = NULL;
+		musicMap.erase(res);
+	}
+}
+void Render::deleteSound(const int& sound_id) {
+	auto res = soundMap.find(sound_id);
+	if (res != soundMap.end()) {
+		Mix_FreeChunk(res -> second);
+		res -> second = NULL;
+		soundMap.erase(res);
+	}
+}
+
 bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		return false;

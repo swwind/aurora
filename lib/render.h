@@ -40,11 +40,18 @@ void DrawRect(const KRect* r);
 void FillRect(const KRect* r);
 void DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect);
 void RenderPresent();
+
 KTexture* registerTexture(std::string src);
 KMusic* registerMusic(std::string src);
 KSound* registerSound(std::string src);
 KFont* registerFont(std::string src, int size);
 KTexture* renderText(const int& fid, std::string text, KColor* color);
+
+void deleteTexture(const int& texture_id);
+void deleteFont(const int& font_id);
+void deleteMusic(const int& music_id);
+void deleteSound(const int& sound_id);
+
 bool init(const char *title, int x, int y, int w, int h, Uint32 flags);
 void quit();
 void close();
