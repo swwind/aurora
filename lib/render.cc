@@ -153,12 +153,16 @@ void Render::DrawRect(const KRect* r) {
 void Render::FillRect(const KRect* r) {
 	SDL_RenderFillRect(gRenderer, r);
 }
-void Render::DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect) {
+void Render::DrawImage(const int& tid,
+											 const KRect* srcrect,
+											 const KRect* dstrect,
+											 const double& degree,
+											 const KPoint* center) {
 	auto res = textureMap.find(tid);
 	if (res == textureMap.end()) {
 		return;
 	}
-	SDL_RenderCopy(gRenderer, res -> second, srcrect, dstrect);
+	SDL_RenderCopyEx(gRenderer, res -> second, srcrect, dstrect, degree, center, SDL_FLIP_NONE);
 }
 
 void Render::RenderPresent() {

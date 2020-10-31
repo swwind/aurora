@@ -71,14 +71,21 @@ Napi::Value FillRect(const Napi::CallbackInfo& info) {
 	delete rect;
 	return env.Undefined();
 }
+const double PI = acos(-1);
 Napi::Value DrawImage(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	int tid = info[0].As<Napi::Number>().Int32Value();
 	KRect* dstrect = parseRect(info[1]);
 	KRect* srcrect = parseRect(info[2]);
+	double degree = 0;
+	if (info.Length() > 3) {
+		degree = info[3].As<Napi::Number>().DoubleValue();
+	}
+	KPoint* center = parsePoint(info[4]);
 
-	Render::DrawImage(tid, srcrect, dstrect);
+	Render::DrawImage(tid, srcrect, dstrect, degree * 180 / PI, center);
 
+	delete center;
 	delete srcrect;
 	delete dstrect;
 	return env.Undefined();

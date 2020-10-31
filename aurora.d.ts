@@ -366,8 +366,10 @@ export function fillRect(rect: KRect, color: KColor): void;
  * @param texture_id texture unique id
  * @param dstrect rect of window, default all
  * @param srcrect rect of picture, default all
+ * @param degree rotate degree, default 0
+ * @param anchor rotate center, default (w/2, h/2)
  */
-export function drawImage(texture_id: number, dstrect: KRect, srcrect: KRect): void;
+export function drawImage(texture_id: number, dstrect?: KRect, srcrect?: KRect, degree?: number, anchor?: KPoint): void;
 
 /**
  * Initialize window

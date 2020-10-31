@@ -38,7 +38,7 @@ void DrawLine(const KPoint* st, const KPoint* ed);
 void DrawPoint(const KPoint* p);
 void DrawRect(const KRect* r);
 void FillRect(const KRect* r);
-void DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect);
+void DrawImage(const int& tid, const KRect* srcrect, const KRect* dstrect, const double& degree, const KPoint* center);
 void RenderPresent();
 
 KTexture* registerTexture(std::string src);

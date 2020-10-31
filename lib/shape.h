@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include "napi.h"
 
-struct KPoint { int x, y; };
+typedef SDL_Point KPoint;
 typedef SDL_Color KColor;
 typedef SDL_Rect KRect;
 
