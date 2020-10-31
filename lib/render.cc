@@ -248,6 +248,14 @@ void Render::deleteSound(const int& sound_id) {
 	}
 }
 
+void Render::setTextureAlpha(const int& texture_id, const __int8_t& alpha) {
+	auto res = textureMap.find(texture_id);
+	if (res != textureMap.end()) {
+		SDL_SetTextureBlendMode(res -> second, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(res -> second, alpha);
+	}
+}
+
 bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		return false;

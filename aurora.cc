@@ -248,6 +248,13 @@ Napi::Value DeleteSound(const Napi::CallbackInfo& info) {
 	Render::deleteSound(sound_id);
 	return env.Undefined();
 }
+Napi::Value SetTextureAlpha(const Napi::CallbackInfo& info) {
+	Napi::Env env = info.Env();
+	int texture_id = info[0].As<Napi::Number>().Int32Value();
+	__int8_t alpha = info[1].As<Napi::Number>().Int32Value();
+	Render::setTextureAlpha(texture_id, alpha);
+	return env.Undefined();
+}
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	// events
@@ -279,6 +286,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	exports["deleteFont"] = Napi::Function::New(env, DeleteFont);
 	exports["deleteMusic"] = Napi::Function::New(env, DeleteMusic);
 	exports["deleteSound"] = Napi::Function::New(env, DeleteSound);
+	exports["setTextureAlpha"] = Napi::Function::New(env, SetTextureAlpha);
 
 	// sounds
 	exports["playMusic"] = Napi::Function::New(env, PlayMusic);

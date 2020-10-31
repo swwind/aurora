@@ -52,6 +52,8 @@ void deleteFont(const int& font_id);
 void deleteMusic(const int& music_id);
 void deleteSound(const int& sound_id);
 
+void setTextureAlpha(const int& texture_id, const __int8_t& alpha);
+
 bool init(const char *title, int x, int y, int w, int h, Uint32 flags);
 void quit();
 void close();

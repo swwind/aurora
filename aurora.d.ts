@@ -418,6 +418,7 @@ export function deleteTexture(texture_id: number): void;
 export function deleteFont(font_id: number): void;
 export function deleteMusic(music_id: number): void;
 export function deleteSound(sound_id: number): void;
+export function setTextureAlpha(texture_id: number, alpha: number): void;
 
 /**
  * Play a music

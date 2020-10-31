@@ -73,6 +73,7 @@ setInterval(() => {
   if (keys["d"] || keys["RIGHT"]) { x += 0.5 * step; }
   lasttime = time;
 
+  aurora.setTextureAlpha(huaji.id, Math.floor(Math.abs(Math.sin(time / 500)) * 0xff));
   aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
   aurora.drawImage(fonts.id, { x: 0, y: 0, w: fonts.width, h: fonts.height });
   aurora.drawImage(huaji.id, { x, y, w, h });
