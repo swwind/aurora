@@ -1,8 +1,8 @@
 function rgb(r, g, b) {
-  return { r, g, b, a: 0xff };
+  return rgba(r, g, b, 0xff);
 }
 function rgba(r, g, b, a) {
-  return { r, g, b, a };
+  return { r: r & 0xff, g: g & 0xff, b: b & 0xff, a: a & 0xff };
 }
 
 module.exports = {
