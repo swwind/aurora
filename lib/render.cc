@@ -260,7 +260,7 @@ void Render::setTextureAlpha(const int& texture_id, const __int8_t& alpha) {
 	}
 }
 
-bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
+bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		return false;
 	}
@@ -269,8 +269,10 @@ bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags) {
 	if (gWindow == NULL) {
 		return false;
 	}
-	// anti alias
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	if (antialias) {
+		// anti alias
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	}
 
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 	if (gRenderer == NULL) {

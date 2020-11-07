@@ -136,7 +136,12 @@ Napi::Value RenderInit(const Napi::CallbackInfo& info) {
 	CheckConfig("popup_menu", POPUP_MENU, false);
 	CheckConfig("vulkan", VULKAN, false);
 
-	bool success = Render::init(title.c_str(), x, y, w, h, flag);
+	bool antialias = false;
+	if (config.Has("antialias") && config.Get("antialias").As<Napi::Boolean>().ToBoolean() == true) {
+		antialias = true;
+	}
+
+	bool success = Render::init(title.c_str(), x, y, w, h, flag, antialias);
 	return Napi::Boolean::New(env, success);
 }
 Napi::Value RenderQuit(const Napi::CallbackInfo& info) {

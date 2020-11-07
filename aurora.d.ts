@@ -312,6 +312,11 @@ type KWindowConfig = {
    * @default false
    */
   vulkan?: boolean;
+  /**
+   * Anti alias
+   * @default false
+   */
+  antialias?: boolean;
 }
 
 /**
