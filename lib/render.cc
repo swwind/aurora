@@ -45,7 +45,8 @@ void keyEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	delete e;
 }
 void mouseEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
-	int x, y;
+	int x;
+	int y;
 	SDL_GetMouseState(&x, &y);
 
 	Napi::Object result = Napi::Object::New(env);
@@ -200,7 +201,7 @@ KFont* Render::registerFont(std::string src, int size) {
 	}
 	return addFont(font, size);
 }
-KTexture* Render::renderText(const int& fid, std::string text, KColor* color, const __uint32_t& length) {
+KTexture* Render::renderText(const int fid, std::string text, KColor* color, const unsigned int length) {
 	auto font = fontMap.find(fid);
 	if (font == fontMap.end()) {
 		return NULL;
@@ -252,7 +253,7 @@ void Render::deleteSound(const int& sound_id) {
 	}
 }
 
-void Render::setTextureAlpha(const int& texture_id, const __int8_t& alpha) {
+void Render::setTextureAlpha(const int texture_id, const char alpha) {
 	auto res = textureMap.find(texture_id);
 	if (res != textureMap.end()) {
 		SDL_SetTextureBlendMode(res -> second, SDL_BLENDMODE_BLEND);

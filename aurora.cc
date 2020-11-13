@@ -198,7 +198,7 @@ Napi::Value RenderText(const Napi::CallbackInfo& info) {
 	int fid = info[0].As<Napi::Number>().Int32Value();
 	std::string text = info[1].As<Napi::String>();
 	KColor* color = parseColor(info[2]);
-	__uint32_t length = info[3].As<Napi::Number>().Int32Value();
+	unsigned int length = info[3].As<Napi::Number>().Int32Value();
 	KTexture* texture = Render::renderText(fid, text, color, length);
 	Napi::Object ret = Napi::Object::New(env);
 	ret["id"] = texture->id;
@@ -264,7 +264,7 @@ Napi::Value DeleteSound(const Napi::CallbackInfo& info) {
 Napi::Value SetTextureAlpha(const Napi::CallbackInfo& info) {
 	Napi::Env env = info.Env();
 	int texture_id = info[0].As<Napi::Number>().Int32Value();
-	__int8_t alpha = info[1].As<Napi::Number>().Int32Value();
+	char alpha = info[1].As<Napi::Number>().Int32Value();
 	Render::setTextureAlpha(texture_id, alpha);
 	return env.Undefined();
 }

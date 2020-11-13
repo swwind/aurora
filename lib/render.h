@@ -45,14 +45,14 @@ KTexture* registerTexture(std::string src);
 KMusic* registerMusic(std::string src);
 KSound* registerSound(std::string src);
 KFont* registerFont(std::string src, int size);
-KTexture* renderText(const int& fid, std::string text, KColor* color, const __uint32_t& length);
+KTexture* renderText(const int fid, std::string text, KColor* color, const unsigned int length);
 
 void deleteTexture(const int& texture_id);
 void deleteFont(const int& font_id);
 void deleteMusic(const int& music_id);
 void deleteSound(const int& sound_id);
 
-void setTextureAlpha(const int& texture_id, const __int8_t& alpha);
+void setTextureAlpha(const int texture_id, const char alpha);
 
 bool init(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias);
 void quit();
