@@ -34,10 +34,6 @@ aurora.init({
   resizable: false,
 });
 
-aurora.startEventLoop(main, () => {
-  process.exit(0);
-});
-
 const main = () => {
   setInterval(() => {
     const time = Date.now();
@@ -54,3 +50,7 @@ const main = () => {
     aurora.render();
   }, 1000 / 60);
 }
+
+aurora.startEventLoop(main, () => {
+  process.exit(0);
+});

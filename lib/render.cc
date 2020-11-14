@@ -263,17 +263,17 @@ void Render::setTextureAlpha(const int texture_id, const char alpha) {
 }
 
 struct RenderInitArguments {
-	const char* title;
+	std::string title;
 	int x, y, w, h;
 	uint32_t flags;
 	bool antialias;
 } renderInitArguments;
 bool Render::fakeInit(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias) {
-	renderInitArguments = { title, x, y, w, h, flags, antialias };
+	renderInitArguments = { std::string(title), x, y, w, h, flags, antialias };
 	return true;
 }
 bool Render::init() {
-	const char *title = renderInitArguments.title;
+	const char *title = renderInitArguments.title.c_str();
 	int x = renderInitArguments.x;
 	int y = renderInitArguments.y;
 	int w = renderInitArguments.w;
