@@ -34,21 +34,23 @@ aurora.init({
   resizable: false,
 });
 
-aurora.startEventLoop(() => {
+aurora.startEventLoop(main, () => {
   process.exit(0);
 });
 
-setInterval(() => {
-  const time = Date.now();
-  const c1 = (Math.sin(time/5000) + 1) * 128;
-  const c2 = (Math.sin(time/4000) + 1) * 128;
-  const c3 = (Math.sin(time/3000) + 1) * 128;
-  aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
-  aurora.fillRect({
-    x: 200 + 200 * Math.sin(time / 500),
-    y: 200 + 200 * Math.cos(time / 500),
-    w: 50,
-    h: 50,
-  }, aurora.color.rgb(c1, c2, c3));
-  aurora.render();
-}, 1000 / 60);
+const main = () => {
+  setInterval(() => {
+    const time = Date.now();
+    const c1 = (Math.sin(time/5000) + 1) * 128;
+    const c2 = (Math.sin(time/4000) + 1) * 128;
+    const c3 = (Math.sin(time/3000) + 1) * 128;
+    aurora.fillRect({ x: 0, y: 0, w: 1280, h: 720 }, aurora.color.white);
+    aurora.fillRect({
+      x: 200 + 200 * Math.sin(time / 500),
+      y: 200 + 200 * Math.cos(time / 500),
+      w: 50,
+      h: 50,
+    }, aurora.color.rgb(c1, c2, c3));
+    aurora.render();
+  }, 1000 / 60);
+}

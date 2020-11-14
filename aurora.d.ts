@@ -108,6 +108,7 @@ type KWindowEventCallback = (e: KWindowEvent) => void;
  * Aurora closed callback
  */
 type KClosedCallback = () => void;
+type KInitializedCallback = (success: boolean) => void;
 
 /**
  * A color. `r`, `g`, `b`, `a` must be int8 type([0, 255]).
@@ -339,7 +340,7 @@ export function bindWindowEventCallback(fn: KWindowEventCallback): void;
  * Start event loops. You MUST have invoked `aurora.init` first.
  * @param fn event loop quited callback (window may not closed)
  */
-export function startEventLoop(fn?: KClosedCallback): void;
+export function startEventLoop(initialized_callback?: KInitializedCallback, fn?: KClosedCallback): void;
 
 /**
  * Draw a line

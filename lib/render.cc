@@ -355,7 +355,6 @@ void Render::close() {
 }
 
 void Render::eventLoop() {
-	Render::init();
 	::quit = false;
 	::release = false;
 	SDL_Event e;
