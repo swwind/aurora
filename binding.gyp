@@ -12,7 +12,6 @@
         "lib/worker.cc"
       ],
       "include_dirs": [
-        "D:\\lib\\SDL2-devel-2.0.12-VC\\SDL2-2.0.12\\include",
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
       'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
@@ -26,11 +25,14 @@
           ]
         }],
         ['OS=="win"', {
+          "include_dirs": [
+            "D:\\VC-deps\\include",
+          ],
           "libraries": [
-            "-l D:\\lib\\SDL2-devel-2.0.12-VC\\SDL2-2.0.12\\lib\\x64\\SDL2",
-            "-l D:\\lib\\SDL2-devel-2.0.12-VC\\SDL2-2.0.12\\lib\\x64\\SDL2_image",
-            "-l D:\\lib\\SDL2-devel-2.0.12-VC\\SDL2-2.0.12\\lib\\x64\\SDL2_ttf",
-            "-l D:\\lib\\SDL2-devel-2.0.12-VC\\SDL2-2.0.12\\lib\\x64\\SDL2_mixer"
+            "-l D:\\VC-deps\\lib\\x64\\SDL2",
+            "-l D:\\VC-deps\\lib\\x64\\SDL2_image",
+            "-l D:\\VC-deps\\lib\\x64\\SDL2_ttf",
+            "-l D:\\VC-deps\\lib\\x64\\SDL2_mixer"
           ]
         }]
       ]

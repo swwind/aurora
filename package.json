@@ -4,12 +4,12 @@
   "description": "A little game engine based on SDL2",
   "main": "aurora.js",
   "dependencies": {
-    "bindings": "~1.2.1",
-    "node-addon-api": "^1.0.0"
+    "bindings": "~1.5.0",
+    "node-addon-api": "^3.0.2"
   },
   "license": "MIT",
   "scripts": {
-    "test": "node example/move.js",
+    "test": "node example/test.js",
     "build": "node-gyp rebuild"
   },
   "gypfile": true

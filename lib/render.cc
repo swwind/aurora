@@ -45,8 +45,7 @@ void keyEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
 	delete e;
 }
 void mouseEventCallback(Napi::Env env, Napi::Function fn, SDL_Event* e) {
-	int x;
-	int y;
+	int x, y;
 	SDL_GetMouseState(&x, &y);
 
 	Napi::Object result = Napi::Object::New(env);
@@ -167,6 +166,10 @@ void Render::DrawImage(const int& tid,
 }
 
 void Render::RenderPresent() {
+	const char* fuck = SDL_GetError();
+	if (strlen(fuck) > 0) {
+		printf("We got an Error!! %s\n", fuck);
+	}
 	SDL_RenderPresent(gRenderer);
 }
 
@@ -262,7 +265,7 @@ void Render::setTextureAlpha(const int texture_id, const char alpha) {
 }
 
 bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) < 0) {
 		return false;
 	}
 
@@ -334,7 +337,7 @@ void Render::eventLoop() {
 	::quit = false;
 	SDL_Event e;
 	while (!::quit) {
-		while (SDL_PollEvent(&e)) {
+		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT || e.type == SDL_WINDOWEVENT) {
 				for (auto& tsfn : windowEventCallbackList) {
 					tsfn.BlockingCall(new SDL_Event(e), windowEventCallback);

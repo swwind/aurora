@@ -31,16 +31,17 @@ if (!aurora.init({
   title: 'hello world',
   w: 1280,
   h: 720,
-  // resizable: true,
+  resizable: true,
+  // fullscreen:  true,
 })) {
   console.log('failed to create window');
   process.exit(1);
-} else {
-  aurora.startEventLoop(() => {
-    aurora.close();
-    process.exit(0);
-  });
 }
+
+aurora.startEventLoop(() => {
+  aurora.close();
+  process.exit(0);
+});
 
 setInterval(() => {
   const time = Date.now();
