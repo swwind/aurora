@@ -141,7 +141,7 @@ Napi::Value RenderInit(const Napi::CallbackInfo& info) {
 		antialias = true;
 	}
 
-	bool success = Render::init(title.c_str(), x, y, w, h, flag, antialias);
+	bool success = Render::fakeInit(title.c_str(), x, y, w, h, flag, antialias);
 	return Napi::Boolean::New(env, success);
 }
 Napi::Value RenderQuit(const Napi::CallbackInfo& info) {
@@ -149,7 +149,7 @@ Napi::Value RenderQuit(const Napi::CallbackInfo& info) {
 	return info.Env().Undefined();
 }
 Napi::Value RenderClose(const Napi::CallbackInfo& info) {
-	Render::close();
+	Render::release();
 	return info.Env().Undefined();
 }
 

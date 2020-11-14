@@ -54,8 +54,10 @@ void deleteSound(const int& sound_id);
 
 void setTextureAlpha(const int texture_id, const char alpha);
 
-bool init(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias);
+bool fakeInit(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias);
+bool init();
 void quit();
+void release();
 void close();
 void eventLoop();
 void playMusic(const int& mid, const int& times);

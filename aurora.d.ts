@@ -337,7 +337,7 @@ export function bindWindowEventCallback(fn: KWindowEventCallback): void;
 
 /**
  * Start event loops. You MUST have invoked `aurora.init` first.
- * @param fn window closed callback
+ * @param fn event loop quited callback (window may not closed)
  */
 export function startEventLoop(fn?: KClosedCallback): void;
 
@@ -383,6 +383,7 @@ export function drawImage(texture_id: number, dstrect?: KRect, srcrect?: KRect, 
 export function init(config: KWindowConfig): boolean;
 /**
  * Quit event loop (DOES NOT close window)
+ * @seealso `close()`
  */
 export function quit(): void;
 /**
@@ -390,7 +391,8 @@ export function quit(): void;
  */
 export function render(): void;
 /**
- * Close the window (MUST quit event loop first)
+ * Quit event loop AND close the window
+ * @seealso `quit()`
  */
 export function close(): void;
 

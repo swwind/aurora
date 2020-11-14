@@ -166,11 +166,9 @@ void Render::DrawImage(const int& tid,
 }
 
 void Render::RenderPresent() {
-	const char* fuck = SDL_GetError();
-	if (strlen(fuck) > 0) {
-		printf("We got an Error!! %s\n", fuck);
+	if (gRenderer != NULL) {
+		SDL_RenderPresent(gRenderer);
 	}
-	SDL_RenderPresent(gRenderer);
 }
 
 KTexture* Render::registerTexture(std::string src) {
@@ -264,7 +262,25 @@ void Render::setTextureAlpha(const int texture_id, const char alpha) {
 	}
 }
 
-bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias) {
+struct RenderInitArguments {
+	const char* title;
+	int x, y, w, h;
+	uint32_t flags;
+	bool antialias;
+} renderInitArguments;
+bool Render::fakeInit(const char *title, int x, int y, int w, int h, Uint32 flags, bool antialias) {
+	renderInitArguments = { title, x, y, w, h, flags, antialias };
+	return true;
+}
+bool Render::init() {
+	const char *title = renderInitArguments.title;
+	int x = renderInitArguments.x;
+	int y = renderInitArguments.y;
+	int w = renderInitArguments.w;
+	int h = renderInitArguments.h;
+	Uint32 flags = renderInitArguments.flags;
+	bool antialias = renderInitArguments.antialias;
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) < 0) {
 		return false;
 	}
@@ -300,8 +316,13 @@ bool Render::init(const char *title, int x, int y, int w, int h, Uint32 flags, b
 }
 
 bool quit = false;
+bool release = false;
 void Render::quit() {
 	::quit = true;
+}
+void Render::release() {
+	::quit = true;
+	::release = true;
 }
 
 void Render::close() {
@@ -334,7 +355,9 @@ void Render::close() {
 }
 
 void Render::eventLoop() {
+	Render::init();
 	::quit = false;
+	::release = false;
 	SDL_Event e;
 	while (!::quit) {
 		while (SDL_PollEvent(&e) != 0) {
@@ -357,5 +380,8 @@ void Render::eventLoop() {
 				}
 			}
 		}
+	}
+	if (::release) {
+		Render::close();
 	}
 }

@@ -36,7 +36,7 @@ aurora.bindMouseEventCallback((e) => {
 });
 aurora.bindWindowEventCallback((e) => {
   if (e.type === 'quit') {
-    aurora.quit();
+    aurora.close();
   }
   if (e.type === "windowmoved") {
     if (mx != null) { x -= e.x - mx; }
@@ -46,7 +46,7 @@ aurora.bindWindowEventCallback((e) => {
 });
 
 aurora.startEventLoop(() => {
-  aurora.close();
+  // aurora.close();
   process.exit(0);
 });
 

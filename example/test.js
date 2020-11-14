@@ -17,7 +17,7 @@ aurora.bindMouseEventCallback((e) => {
 aurora.bindWindowEventCallback((e) => {
   console.log('window event', e.type);
   if (e.type === 'quit') {
-    aurora.quit();
+    aurora.close();
   }
   if (e.type === 'windowmoved') {
     console.log('new pos:', e.x, e.y);
@@ -27,19 +27,14 @@ aurora.bindWindowEventCallback((e) => {
   }
 });
 
-if (!aurora.init({
+aurora.init({
   title: 'hello world',
   w: 1280,
   h: 720,
-  resizable: true,
-  // fullscreen:  true,
-})) {
-  console.log('failed to create window');
-  process.exit(1);
-}
+  resizable: false,
+});
 
 aurora.startEventLoop(() => {
-  aurora.close();
   process.exit(0);
 });
 
